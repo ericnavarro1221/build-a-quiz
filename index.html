@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Quiz</title>
+    <body>
+        <h1>"Test your Knowledge"</h1>
+    </body>
+   <style>
+h1 {
+    color: orangered;
+    text-align: center;
+    text-decoration: underline;
+    text-decoration-color: orangered;
+    text-shadow:black 3px 2px;
+    font-style: italic;
+    margin-top: 100px;
+    font-size: 40px;
+}
+body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+    background-image: url(bg1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 30px;
+}
+
+#quiz-container {
+    margin: 50px;
+    padding: 50px;
+    color: white;
+    background-color: black;
+    text-align: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background: fixed;
+    border-radius: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.question {
+    margin-bottom: 20px;
+    color: white;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 30px;
+    font-style: italic;
+    text-shadow: 2px 2px black;
+}
+
+.options button {
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: black;
+    background: purple;
+    margin-left: 100px;
+    margin-right: 100px;
+    border-radius: 50px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-align: justify;
+}
+
+.options button:hover {
+    background-color: white;
+    transition: 0.5s;
+}
+
+
+#timer {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: orangered;
+    font-family: bold;
+    font-size: 30px;
+    text-shadow: 2px 2px black;
+    background: linear-gradient(135deg, rgb(5, 68, 194), #72094d, #850404);
+    margin-left: 450px;
+    margin-right: 450px;
+    border-radius: 50px;
+}
+
+#feedback {
+    font-weight: bold;
+    margin-top: 10px;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;  
+    font-size: 24px;
+    margin-left: 100px;
+    margin-right: 100px;
+    text-shadow: 1px 1px white;
+}
+
+#next-btn, #restart-btn {
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: orangered;
+    color: black;
+    border: none;  
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: italic;
+    font-size: 1em;
+}
+
+#next-btn:hover {
+    background-color: white;
+    transition: 0.5s;
+}
+
+#restart-btn:hover {
+    background-color: white;
+    transition: 0.5s;
+}
+
+
+   </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <div id="timer"></div>
+        <div id="question-container" class="question"></div>
+        <div id="options-container" class="options"></div>
+        <div id="feedback"></div>
+        <button id="next-btn">Next</button>
+        <button id="restart-btn" style="display: none;">Restart</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is the purpose of the querySelector method in JavaScript?",
+                options: [
+                "A) To select and modify HTML elements",
+                "B) To declare a new variable",
+                "C) To create a new function",
+                "D) To define a CSS style"],
+                correctAnswer: "A) To select and modify HTML elements"
+            },
+            {
+                question: "What is the difference between let and const in JavaScript?",
+                options: [
+                "A) They are interchangeable and can be used in the same context", 
+                "B) let is used for variables that will never change, while const is used for variables that can be reassigned", 
+                "C) let is used for block-scoped variables, while const is used for constants with a fixed value", 
+                " D) let is used for global variables, while const is used for local variables"],
+                correctAnswer: "C) let is used for block-scoped variables, while const is used for constants with a fixed value"
+            },
+            {
+                question: " Question: What does the acronym HTML stand for?",
+                options: [
+                "A) Hyper Transfer Markup Language", 
+                "B) Hyper Text Markup Language", 
+                "C) High-Level Text Markup Language", 
+                "D) Home Tool Markup Language"],
+                correctAnswer: "B) Hyper Text Markup Language"
+            },
+            {
+                question: "Question: How is an ordered list represented in HTML?",
+                options: [
+                "A) <ul><li>Item 1</li><li>Item 2</li></ul>", 
+                "B) <ol><li>Item 1</li><li>Item 2</li></ol>", 
+                "C) <dl><dt>Item 1</dt><dd>Item 2</dd></dl>", 
+                "D) <list><item>Item 1</item><item>Item 2</item></list>"],
+                correctAnswer: "B) <ol><li>Item 1</li><li>Item 2</li></ol>"
+            },
+            {
+                question: "Question: What does the box-sizing property in CSS control?",
+                options: [
+                "A) The size of the text box in a form", 
+                "B) The size of the margin around an element", 
+                "C) How the total width and height of an element are calculated", 
+                "D) The size of a div element"],
+                correctAnswer: "C) How the total width and height of an element are calculated"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+
+        const questionContainer = document.getElementById("question-container");
+        const optionsContainer = document.getElementById("options-container");
+        const timerContainer = document.getElementById("timer");
+        const feedbackContainer = document.getElementById("feedback");
+        const nextButton = document.getElementById("next-btn");
+        const restartButton = document.getElementById("restart-btn");
+
+        function startQuiz() {
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionContainer.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = "";
+            feedbackContainer.innerHTML = "";
+
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.addEventListener("click", () => checkAnswer(index));
+                optionsContainer.appendChild(button);
+            });
+
+            let timeLeft = 10;
+            updateTimerDisplay(timeLeft);
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay(timeLeft);
+
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        showQuestion();
+                    } else {
+                        showScore();
+                    }
+                }
+            }, 1000);
+
+            nextButton.style.display = "none";
+            restartButton.style.display = "none";
+        }
+
+        function checkAnswer(selectedIndex) {
+            clearInterval(timer);
+
+            const currentQuestion = questions[currentQuestionIndex];
+            const selectedOption = currentQuestion.options[selectedIndex];
+
+            if (selectedOption === currentQuestion.correctAnswer) {
+                score++;
+                feedbackContainer.textContent = "Correct!";
+            } else {
+                feedbackContainer.textContent = "Incorrect!"
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                nextButton.style.display = "block";
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            clearInterval(timer);
+
+            questionContainer.textContent = `Your Score: ${score} out of ${questions.length}`;
+            optionsContainer.innerHTML = "";
+            feedbackContainer.innerHTML = "";
+            nextButton.style.display = "none";
+            restartButton.style.display = "block";
+            timerContainer.innerHTML = "";
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            startQuiz();
+        }
+
+        function updateTimerDisplay(timeLeft) {
+            timerContainer.innerHTML = `Time Left: ${timeLeft}s`;
+        }
+
+        nextButton.addEventListener("click", showQuestion);
+        restartButton.addEventListener("click", restartQuiz);
+
+        startQuiz();
+    </script>
+</body>
+</html>
+
+
+
+
